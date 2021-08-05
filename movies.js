@@ -1,5 +1,6 @@
 
 const axios = require('axios');
+let movieMemory = {};
 
 ////////////movies part begain////////////////////////////////
 
@@ -14,11 +15,23 @@ function getMovieHandler(req, res) {
 
     const movieKey=process.env.MOVIE_KEY
     const URLMovie = `https://api.themoviedb.org/3/search/movie?api_key=${movieKey}&query=${city}`
+    console.log(movieMemory);
+    console.log('helllo');
 
-    axios .get(URLMovie).then(result => {
+    if(movieMemory[city]!==undefined){
+        console.log('movieMemory memory');
+        res.send(movieMemory[city])
+        
+    }else{
+
+        axios .get(URLMovie).then(result => {
          
 
             let moviesArray = result.data.results
+
+            movieMemory[city]=moviesArray
+            console.log('movieMemory api');
+
 
             res.send(moviesForObject(moviesArray));
         })
@@ -44,10 +57,14 @@ const moviesForObject = (moviesObj) => {
 
         forMoviesObj.push(new Movies(title,overview,vote_average,vote_count,poster_path,popularity,release_date));
 
-        console.log(forMoviesObj);
+        // console.log(forMoviesObj);
     });
     return forMoviesObj;
 }
+
+    }
+
+   
 
 ///////our const
 class Movies {
